@@ -271,6 +271,41 @@ func checkPodStatus(namespace string, labelSelector string, timeout time.Duratio
 	return false, "Timeout waiting for pods to become ready"
 }
 
+// cleanupPreviousDeployments removes any existing deployments that might conflict with new ones
+func cleanupPreviousDeployments(namespace string, manifestPath string) (bool, string) {
+	// Extract resource type and name from the manifest file
+	cmd := exec.Command("kubectl", "get", "-f", manifestPath, "-o", "jsonpath={.kind}/{.metadata.name}")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return false, fmt.Sprintf("Error identifying resource in manifest: %v\nOutput: %s", err, string(output))
+	}
+
+	resourceInfo := strings.Split(string(output), "/")
+	if len(resourceInfo) != 2 {
+		return true, "Could not parse resource type/name, skipping cleanup"
+	}
+
+	resourceType := resourceInfo[0]
+	resourceName := resourceInfo[1]
+
+	// If it's a deployment or statefulset, delete it to ensure clean state
+	if resourceType == "Deployment" || resourceType == "StatefulSet" {
+		fmt.Printf("Cleaning up existing %s: %s in namespace %s\n", resourceType, resourceName, namespace)
+		deleteCmd := exec.Command("kubectl", "delete", strings.ToLower(resourceType), resourceName, "-n", namespace, "--ignore-not-found=true")
+		deleteOutput, deleteErr := deleteCmd.CombinedOutput()
+
+		if deleteErr != nil {
+			return false, fmt.Sprintf("Error deleting previous %s: %v\nOutput: %s", resourceType, deleteErr, string(deleteOutput))
+		}
+
+		// Wait a moment for resources to be cleaned up
+		time.Sleep(5 * time.Second)
+		return true, fmt.Sprintf("Successfully cleaned up previous %s: %s", resourceType, resourceName)
+	}
+
+	return true, fmt.Sprintf("No cleanup needed for resource type: %s", resourceType)
+}
+
 // deployKubernetesManifests attempts to deploy multiple Kubernetes manifests and track results for each
 func deployKubernetesManifests(manifestPaths []string) (bool, []ManifestDeployResult) {
 	results := make([]ManifestDeployResult, len(manifestPaths))
@@ -301,6 +336,18 @@ func deployKubernetesManifests(manifestPaths []string) (bool, []ManifestDeployRe
 
 // deployAndVerifySingleManifest applies a single manifest and verifies pod health
 func deployAndVerifySingleManifest(manifestPath string) (bool, string) {
+	// Extract namespace from manifest or use default
+	namespace := "default"
+
+	// Clean up any previous deployments first
+	cleanupSuccess, cleanupOutput := cleanupPreviousDeployments(namespace, manifestPath)
+	if !cleanupSuccess {
+		fmt.Printf("Warning: Failed to clean up previous deployments: %s\n", cleanupOutput)
+		// Continue with deployment despite cleanup failure
+	} else {
+		fmt.Printf("Cleanup before deployment: %s\n", cleanupOutput)
+	}
+
 	// Apply the manifest
 	cmd := exec.Command("kubectl", "apply", "-f", manifestPath)
 	output, err := cmd.CombinedOutput()
