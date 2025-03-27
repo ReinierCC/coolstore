@@ -35,32 +35,6 @@ jobs:
         run: |
           .github/workflows/bin/draft create -vv --interactive=false --skip-file-detection --variable IMAGENAME=${{ steps.kind.outputs.LOCAL_REGISTRY }}/tomcat-hello-world-workflow 
       
-      - name: Generate AI-friendly repository structure
-        run: |
-          # Install tree command and jq
-          sudo apt-get install -y tree jq
-          
-          # Create a traditional tree view for human reading
-          echo "Repository structure:" > repo-structure.txt
-          tree -a -I '.git' >> repo-structure.txt
-          
-          # Generate ultra-minimal nested structure with no duplicated values
-          tree -a -I '.git' -J | jq '
-            def process:
-              if .type == "directory" and .name then
-                {(.name): (.contents | map(process) | reduce .[] as $item ({}; . + $item))}
-              elif .name then
-                {(.name): ""}
-              else
-                {}
-              end;
-            .[0].contents | map(process) | reduce .[] as $item ({}; . + $item)
-          ' > repo-structure.json
-          
-          # Display the structure
-          cat repo-structure.txt
-          echo "JSON structure available at: repo-structure.json"
-
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
