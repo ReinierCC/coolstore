@@ -617,7 +617,7 @@ func main() {
 		case "iterate-dockerfile-build":
 			maxIterations := 5
 			dockerfilePath := "../../../Dockerfile"
-			fileStructurePath := "repo_structure_json.txt"
+			fileStructurePath := "../repo-structure.json"
 
 			// Allow custom dockerfile path
 			if len(os.Args) > 2 {
@@ -642,7 +642,7 @@ func main() {
 		case "iterate-kubernetes-deploy":
 			maxIterations := 5
 			manifestPath := "../../../manifests" // Default directory containing manifests
-			fileStructurePath := "repo_structure_json.txt"
+			fileStructurePath := "../repo-structure.json"
 
 			// Allow custom manifest path (can be a directory or file)
 			if len(os.Args) > 2 {
