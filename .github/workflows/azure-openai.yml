@@ -33,7 +33,7 @@ jobs:
           rm -rf draft
       - name: Generate with Draft
         run: |
-          .github/workflows/bin/draft create -vv --interactive=false --skip-file-detection --variable IMAGENAME=${{ steps.kind.outputs.LOCAL_REGISTRY }}/tomcat-hello-world-workflow 
+          .github/workflows/bin/draft create -vv --interactive=false --skip-file-detection --variable IMAGENAME=${{ steps.kind.outputs.LOCAL_REGISTRY }}/workflow 
       
       - name: Set up Go
         uses: actions/setup-go@v4

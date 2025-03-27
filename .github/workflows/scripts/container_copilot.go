@@ -226,7 +226,7 @@ func buildDockerfile(dockerfilePath string) (bool, string) {
 
 	// Run Docker build with explicit context path
 	// Use the absolute path for the dockerfile and specify the context directory
-	cmd := exec.Command("docker", "build", "-f", dockerfilePath, "-t", registryName+"/tomcat-hello-world-workflow:latest", dockerfileDir)
+	cmd := exec.Command("docker", "build", "-f", dockerfilePath, "-t", registryName+"/workflow:latest", dockerfileDir)
 	output, err := cmd.CombinedOutput()
 	outputStr := string(output)
 
@@ -371,7 +371,7 @@ func iterateDockerfileBuild(client *azopenai.Client, deploymentID string, docker
 
 			//Temp code for pushing to kind registry
 			registryName := os.Getenv("REGISTRY")
-			cmd := exec.Command("docker", "push", registryName+"/tomcat-hello-world-workflow:latest")
+			cmd := exec.Command("docker", "push", registryName+"/workflow:latest")
 			output, err := cmd.CombinedOutput()
 			outputStr := string(output)
 			fmt.Println("Output: ", outputStr)
