@@ -1,0 +1,52 @@
+{
+  ".github": {
+    ".DS_Store": "",
+    "workflows": {
+      ".DS_Store": "",
+      "azure-openai.yml": "",
+      "scripts": {
+        ".DS_Store": "",
+        "container_copilot.go": "",
+        "go.mod": "",
+        "go.sum": "",
+        "repo_structure.txt": "",
+        "repo_structure_json.txt": ""
+      },
+      "tree-test.yml": ""
+    }
+  },
+  ".gitignore": "",
+  ".idea": {
+    ".name": "",
+    "artifacts": {
+      "tomcat_hello_world_war_exploded.xml": ""
+    },
+    "compiler.xml": "",
+    "copyright": {
+      "profiles_settings.xml": ""
+    },
+    "encodings.xml": "",
+    "misc.xml": "",
+    "modules.xml": "",
+    "scopes": {
+      "scope_settings.xml": ""
+    },
+    "vcs.xml": ""
+  },
+  "Dockerfile": "",
+  "repo-structure.json": "",
+  "repo-structure.txt": "",
+  "src": {
+    "sample": {
+      "HelloWorld.java": ""
+    }
+  },
+  "tomcat-hello-world.iml": "",
+  "web": {
+    "WEB-INF": {
+      "web.xml": ""
+    },
+    "index.jsp": "",
+    "style.css": ""
+  }
+}
